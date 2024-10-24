@@ -8,22 +8,18 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from oemof.solph import Bus
-from oemof.solph import EnergySystem
-from oemof.solph import Flow
-from oemof.solph import Model
-from oemof.solph import processing
-from oemof.solph.components import GenericStorage
-from oemof.solph.components import Sink
-from oemof.solph.components import Source
 
-from oemof.thermal.stratified_thermal_storage import calculate_capacities
-from oemof.thermal.stratified_thermal_storage import calculate_losses
+from oemof.network.graph import create_nx_graph
+
+from oemof.solph import Bus, EnergySystem, Flow, Model, processing
+from oemof.solph.components import GenericStorage, Sink, Source
+
 from oemof.thermal.stratified_thermal_storage import (
     calculate_storage_dimensions,
+    calculate_storage_u_value,
+    calculate_losses,
+    calculate_capacities
 )
-from oemof.thermal.stratified_thermal_storage import calculate_storage_u_value
-
 
 def operation_example():
     # Set paths
@@ -138,6 +134,11 @@ def operation_example():
 
     energysystem.add(
         bus_heat, heat_source, shortage, excess, heat_demand, thermal_storage
+    )
+
+    create_nx_graph(
+        energy_system=energysystem,
+        filename=os.path.join(os.getcwd(), "outputs", "energy_system.png")
     )
 
     # Create and solve the optimization model
